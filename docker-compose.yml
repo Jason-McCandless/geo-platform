@@ -1,0 +1,73 @@
+version: '3.9'
+
+services:
+  api:
+    build: .
+    container_name: geo-api
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV=local
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/geodb
+    depends_on:
+      - db
+    volumes:
+      - ./app:/app
+  db:
+    image: postgres:15
+    container_name: geo_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: geodb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+
+#  services
+
+# Each service = one container
+
+# api
+
+# This is your FastAPI app.
+
+# build: .
+
+# Uses your Dockerfile
+
+# ports: "8000:8000"
+
+# Left = your machine
+
+# Right = container
+
+# Browser → localhost:8000 → container
+
+# DATABASE_URL=...@db:5432
+
+# Key insight:
+# db is the service name, and Docker gives it DNS
+# No IPs. No hacks. This is real infra thinking.
+
+# depends_on
+
+# Ensures DB starts first (order, not readiness)
+
+# db
+
+# This is Postgres as a managed service (locally)
+
+# image: postgres:15
+
+# Official, production-grade image
+
+# volumes
+
+# Data persists even if container restarts
+
+# This is exactly how RDS works conceptually
